@@ -41,3 +41,41 @@ jobs:
         with:
           name: ChatApp-iOS-Simulator
           path: artifact/ChatApp.app
+
+  build-device:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build for iOS device (unsigned)
+        run: |
+          xcodebuild \
+            -project ChatApp.xcodeproj \
+            -scheme ChatApp \
+            -sdk iphoneos \
+            -configuration Debug \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package as unsigned IPA
+        run: |
+          mkdir -p ipa/Payload
+          cp -R build/Build/Products/Debug-iphoneos/ChatApp.app ipa/Payload/
+          cd ipa
+          zip -r ChatApp-unsigned.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChatApp-unsigned-ipa
+          path: ipa/ChatApp-unsigned.ipa
