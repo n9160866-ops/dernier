@@ -102,7 +102,7 @@ struct ChatView: View {
             if isMe { Spacer(minLength: 40) }
             Text(message.deleted ? "Message supprimé" : (message.content ?? ""))
                 .italic(message.deleted)
-                .foregroundStyle(message.deleted ? .secondary : (isMe ? .white : .primary))
+                .foregroundStyle(message.deleted ? Color.secondary : (isMe ? Color.white : Color.primary))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(isMe ? Color.accentColor : Color(.systemGray5))
